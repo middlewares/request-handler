@@ -1,7 +1,7 @@
 {
-    "name": "middlewares/fast-route",
+    "name": "middlewares/request-handler",
     "type": "library",
-    "description": "Middleware to use FastRoute",
+    "description": "Middleware to execute request handlers",
     "license": "MIT",
     "keywords": [
         "psr-7",
@@ -9,18 +9,18 @@
         "middleware",
         "server",
         "http",
-        "router",
-        "fastRoute",
-        "fast-route"
+        "request",
+        "handler",
+        "controller",
+        "invoke"
     ],
-    "homepage": "https://github.com/middlewares/fast-route",
+    "homepage": "https://github.com/middlewares/request-handler",
     "support": {
-        "issues": "https://github.com/middlewares/fast-route/issues"
+        "issues": "https://github.com/middlewares/request-handler/issues"
     },
     "require": {
         "php": "^5.6 || ^7.0",
         "http-interop/http-middleware": "^0.4",
-        "nikic/fast-route": "^1.0",
         "middlewares/utils": "~0.10"
     },
     "require-dev": {
@@ -31,7 +31,7 @@
         "psr/container": "^1.0"
     },
     "suggest": {
-        "container-interop/container-interop": "Can be used to automatically resolve route actions"
+        "container-interop/container-interop": "Can be used to automatically resolve handlers"
     },
     "autoload": {
         "psr-4": {
