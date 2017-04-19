@@ -1,4 +1,4 @@
-# middlewares/fast-route
+# middlewares/request-handler
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]](LICENSE)
@@ -18,77 +18,67 @@ Middleware to use [FastRoute](https://github.com/nikic/FastRoute).
 
 ## Installation
 
-This package is installable and autoloadable via Composer as [middlewares/fast-route](https://packagist.org/packages/middlewares/fast-route).
+This package is installable and autoloadable via Composer as [middlewares/request-handler](https://packagist.org/packages/middlewares/request-handler).
 
 ```sh
-composer require middlewares/fast-route
+composer require middlewares/request-handler
 ```
 
 ## Example
 
 ```php
-//Create the router dispatcher
-$dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
-    $r->addRoute('GET', '/hello/{name}', function ($request) {
-        //The route parameters are stored as attributes
-        $name = $request->getAttribute('name');
-
-        //You can echo the output (it will be captured and writted into the body)
-        echo sprintf('Hello %s', $name);
-
-        //Or return a string
-        return sprintf('Hello %s', $name);
-
-        //Or return a response
-        return new Response();
-    });
-});
-
 $dispatcher = new Dispatcher([
-    new Middlewares\FastRoute($dispatcher)
+    // ...
+    new Middlewares\RequestHandler(),
 ]);
 
 $response = $dispatcher->dispatch(new ServerRequest('/hello/world'));
 ```
 
-**fastRoute** allows to define anything as the router handler (a closure, callback, action object, controller class, etc). By default, it's interpreted in the following way:
+When the request handler is invoked, it expects a request attribute to be defined that contains a reference to the handler. The reference will then be resolved and executed as a callable.
+
+**This middleware should be the last middleware dispatched!** It does not call the delegate to continue processing.
+
+If no resolver is provided, the reference will be interpreted as follows:
 
 * If it's a string similar to `Namespace\Class::method`, and the method is not static, create a instance of `Namespace\Class` and call the method.
 * If the string is the name of a existing class (like: `Namespace\Class`) and contains the method `__invoke`, create a instance and execute that method.
 * Otherwise, treat it as a callable.
 
-If you want to change this behaviour, use a container implementing the [PSR-11 spec](https://github.com/php-fig/container) to return the route callable.
+There are two options to change the default behavior:
+
+- Inject a `Middlewares\Utils\CallableResolver\ContainerResolver` that wraps a [PSR-11 container](https://github.com/php-fig/container).
+- Inject a `Middlewares\Utils\CallableResolver\CallableResolverInterface` instance that returns a callable.
+
+```php
+use Middlewares\Utils\CallableResolver\ContainerResolver;
+
+// Use a PSR-11 container to load the handler
+$resolver = new ContainerResolver($container);
+
+$dispatcher = new Dispatcher([
+    // ...
+    new Middlewares\RequestHandler($resolver),
+]);
+```
 
 ## Options
 
-#### `__construct(FastRoute\Dispatcher $dispatcher)`
+### `__construct(Middlewares\Utils\CallableResolver\CallableResolverInterface $resolver)`
 
-The dispatcher instance to use.
+The resolver instance to use. If none is provided a generic `ReflectionResolver` will be used.
 
-#### `resolver(Middlewares\Utils\CallableResolver\CallableResolverInterface $resolver)`
+### `attribute(string $attribute)`
 
-The resolver implementing [CallableResolverInterface]() to resolve the route handlers.
+The attribute name used to store the handler reference in the server request. The default attribute name is `request-handler`.
 
-#### `container(Psr\Container\ContainerInterface $container)`
+### `arguments(...$args)`
 
-To use a container implementing [PSR-11 interface](https://github.com/php-fig/container) to resolve the route handlers.
-
-#### `arguments(...$args)`
-
-Extra arguments to pass to the controller. This is useful to inject, for example a service container:
+Extra arguments to pass to the handler. This is useful to inject, for example a service container:
 
 ```php
-$dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
-    $r->addRoute('GET', '/posts/{id}', function ($request, $app) {
-        $id = $request->getAttribute('id');
-        $post = $app->get('database')->select($id);
-        
-        return $app->get('templates')->render($post);
-    });
-});
-
 $dispatcher = new Dispatcher([
-    (new Middlewares\FastRoute($dispatcher))
+    (new Middlewares\RequestHandler())
         ->arguments($app)
 ]);
 ```
@@ -99,15 +89,15 @@ Please see [CHANGELOG](CHANGELOG.md) for more information about recent changes a
 
 The MIT License (MIT). Please see [LICENSE](LICENSE) for more information.
 
-[ico-version]: https://img.shields.io/packagist/v/middlewares/fast-route.svg?style=flat-square
+[ico-version]: https://img.shields.io/packagist/v/middlewares/request-handler.svg?style=flat-square
 [ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
-[ico-travis]: https://img.shields.io/travis/middlewares/fast-route/master.svg?style=flat-square
-[ico-scrutinizer]: https://img.shields.io/scrutinizer/g/middlewares/fast-route.svg?style=flat-square
-[ico-downloads]: https://img.shields.io/packagist/dt/middlewares/fast-route.svg?style=flat-square
-[ico-sensiolabs]: https://img.shields.io/sensiolabs/i/bb44398f-43ee-4a09-a60e-d5c9735fa0be.svg?style=flat-square
+[ico-travis]: https://img.shields.io/travis/middlewares/request-handler/master.svg?style=flat-square
+[ico-scrutinizer]: https://img.shields.io/scrutinizer/g/middlewares/request-handler.svg?style=flat-square
+[ico-downloads]: https://img.shields.io/packagist/dt/middlewares/request-handler.svg?style=flat-square
+[ico-sensiolabs]: https://img.shields.io/sensiolabs/i/8afda09a-397a-4c80-9dc8-6edc081a03e3.svg?style=flat-square
 
-[link-packagist]: https://packagist.org/packages/middlewares/fast-route
-[link-travis]: https://travis-ci.org/middlewares/fast-route
-[link-scrutinizer]: https://scrutinizer-ci.com/g/middlewares/fast-route
-[link-downloads]: https://packagist.org/packages/middlewares/fast-route
-[link-sensiolabs]: https://insight.sensiolabs.com/projects/bb44398f-43ee-4a09-a60e-d5c9735fa0be
+[link-packagist]: https://packagist.org/packages/middlewares/request-handler
+[link-travis]: https://travis-ci.org/middlewares/request-handler
+[link-scrutinizer]: https://scrutinizer-ci.com/g/middlewares/request-handler
+[link-downloads]: https://packagist.org/packages/middlewares/request-handler
+[link-sensiolabs]: https://insight.sensiolabs.com/projects/8afda09a-397a-4c80-9dc8-6edc081a03e3
