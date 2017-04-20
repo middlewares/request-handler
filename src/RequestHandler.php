@@ -20,7 +20,7 @@ class RequestHandler implements MiddlewareInterface
     /**
      * @var string Attribute name for handler reference
      */
-    private $attribute = 'request-handler';
+    private $handlerAttribute = 'request-handler';
 
     /**
      * @var array Extra arguments passed to the handler
@@ -44,13 +44,13 @@ class RequestHandler implements MiddlewareInterface
     /**
      * Set the attribute name to store handler reference.
      *
-     * @param string $attribute
+     * @param string $handlerAttribute
      *
      * @return self
      */
-    public function attribute($attribute)
+    public function handlerAttribute($handlerAttribute)
     {
-        $this->attribute = $attribute;
+        $this->handlerAttribute = $handlerAttribute;
 
         return $this;
     }
@@ -79,21 +79,9 @@ class RequestHandler implements MiddlewareInterface
     {
         $arguments = array_merge([$request], $this->arguments);
 
-        $handler = $this->getHandler($request);
+        $handler = $request->getAttribute($this->handlerAttribute);
         $callable = $this->resolver->resolve($handler, $arguments);
 
         return CallableHandler::execute($callable, $arguments);
-    }
-
-    /**
-     * Return the handler reference from the request.
-     *
-     * @param ServerRequestInterface $request
-     *
-     * @return callable|string|array
-     */
-    protected function getHandler(ServerRequestInterface $request)
-    {
-        return $request->getAttribute($this->attribute);
     }
 }
