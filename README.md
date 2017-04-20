@@ -24,10 +24,20 @@ This package is installable and autoloadable via Composer as [middlewares/reques
 composer require middlewares/request-handler
 ```
 
+You may also want to install [middlewares/fast-route](https://packagist.org/packages/middlewares/fast-route) for routing.
+
 ## Example
 
+A routing middleware needs to be called before the request can be handled. In this example, we will use `fast-route` middleware.
+
 ```php
+// Create the routing dispatcher
+$fastRouteDispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
+    $r->get('/hello/{name}', HelloWorldController::class);
+});
+
 $dispatcher = new Dispatcher([
+    new Middlewares\FastRoute($fastRouteDispatcher),
     // ...
     new Middlewares\RequestHandler(),
 ]);
