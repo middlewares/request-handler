@@ -7,7 +7,7 @@
 [![Total Downloads][ico-downloads]][link-downloads]
 [![SensioLabs Insight][ico-sensiolabs]][link-sensiolabs]
 
-Middleware to use [FastRoute](https://github.com/nikic/FastRoute).
+Middleware to execute request handlers discovered by a router.
 
 ## Requirements
 
@@ -24,10 +24,20 @@ This package is installable and autoloadable via Composer as [middlewares/reques
 composer require middlewares/request-handler
 ```
 
+You may also want to install any route middleware like [middlewares/fast-route](https://packagist.org/packages/middlewares/fast-route) or [middlewares/aura-router](https://packagist.org/packages/middlewares/aura-router) for routing.
+
 ## Example
 
+A routing middleware needs to be called before the request can be handled. In this example, we will use `fast-route` middleware.
+
 ```php
+// Create the routing dispatcher
+$fastRouteDispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
+    $r->get('/hello/{name}', HelloWorldController::class);
+});
+
 $dispatcher = new Dispatcher([
+    new Middlewares\FastRoute($fastRouteDispatcher),
     // ...
     new Middlewares\RequestHandler(),
 ]);
@@ -68,9 +78,9 @@ $dispatcher = new Dispatcher([
 
 The resolver instance to use. If none is provided a generic `ReflectionResolver` will be used.
 
-### `attribute(string $attribute)`
+### `handlerAttribute(string $handlerAttribute)`
 
-The attribute name used to store the handler reference in the server request. The default attribute name is `request-handler`.
+The attribute name used to get the handler reference in the server request. The default attribute name is `request-handler`.
 
 ### `arguments(...$args)`
 
