@@ -26,6 +26,20 @@ composer require middlewares/request-handler
 
 You may also want to install any route middleware like [middlewares/fast-route](https://packagist.org/packages/middlewares/fast-route) or [middlewares/aura-router](https://packagist.org/packages/middlewares/aura-router) for routing.
 
+## Purpose
+
+There are two completely separate steps when it comes to route handing:
+
+1. Determining if the request is valid and can be resolved by the application.
+2. Handling the request inside the application.
+
+The first step usually resolves into a route callback, while the product of the second one is usually the result of executing that callback.
+
+Multiple things that can happen between the first and second steps: input validation, authentication, authorization, etc.
+and in some scenarios we may not want to continue processing the request (e.g. auth, accessing DB resources, etc.) if that would ultimately fail to resolve e.g. procuding an *HTTP 400* error.
+
+Splitting routing from request handling allows us to use any middleware between these two steps. It also makes the `request-handler` middleware able to be used with any routing component.
+
 ## Example
 
 A routing middleware needs to be called before the request can be handled. In this example, we will use `fast-route` middleware.
