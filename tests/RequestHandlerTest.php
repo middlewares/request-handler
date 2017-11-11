@@ -12,8 +12,9 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use PHPUnit\Framework\TestCase;
 
-class RequestHandlerTest extends \PHPUnit_Framework_TestCase
+class RequestHandlerTest extends TestCase
 {
     public function testHandleCallable()
     {

@@ -1,10 +1,10 @@
 <?php
+declare(strict_types = 1);
 
 namespace Middlewares;
 
 use Middlewares\Utils\CallableHandler;
 use Middlewares\Utils\CallableResolver\CallableResolverInterface;
-use Middlewares\Utils\CallableResolver\ReflectionResolver;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Interop\Http\Server\MiddlewareInterface;
@@ -29,26 +29,16 @@ class RequestHandler implements MiddlewareInterface
 
     /**
      * Set the resolver instance.
-     *
-     * @param CallableResolverInterface $resolver
      */
     public function __construct(CallableResolverInterface $resolver = null)
     {
-        if (empty($resolver)) {
-            $resolver = new ReflectionResolver();
-        }
-
         $this->resolver = $resolver;
     }
 
     /**
      * Set the attribute name to store handler reference.
-     *
-     * @param string $handlerAttribute
-     *
-     * @return self
      */
-    public function handlerAttribute($handlerAttribute)
+    public function handlerAttribute(string $handlerAttribute): self
     {
         $this->handlerAttribute = $handlerAttribute;
 
@@ -57,10 +47,8 @@ class RequestHandler implements MiddlewareInterface
 
     /**
      * Extra arguments passed to the handler.
-     *
-     * @return self
      */
-    public function arguments(...$args)
+    public function arguments(...$args): self
     {
         $this->arguments = $args;
 
@@ -69,19 +57,12 @@ class RequestHandler implements MiddlewareInterface
 
     /**
      * Process a server request and return a response.
-     *
-     * @param ServerRequestInterface  $request
-     * @param RequestHandlerInterface $handler
-     *
-     * @return ResponseInterface
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $arguments = array_merge([$request], $this->arguments);
-
         $handler = $request->getAttribute($this->handlerAttribute);
-        $callable = $this->resolver->resolve($handler, $arguments);
+        $callable = new CallableHandler($handler, $this->arguments, $this->resolver);
 
-        return CallableHandler::execute($callable, $arguments);
+        return $callable->handle($request);
     }
 }
