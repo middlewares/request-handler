@@ -7,12 +7,13 @@ use Middlewares\Utils\CallableResolver\CallableResolverInterface;
 use Middlewares\Utils\CallableResolver\ContainerResolver;
 use Middlewares\Utils\Dispatcher;
 use Middlewares\Utils\Factory;
+use Middlewares\Utils\RequestHandler as UtilsRequestHandler;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use PHPUnit\Framework\TestCase;
 
 class RequestHandlerTest extends TestCase
 {
@@ -100,5 +101,20 @@ class RequestHandlerTest extends TestCase
         ], $request);
 
         $this->assertSame(200, $response->getStatusCode());
+    }
+
+    public function testRequestHandler()
+    {
+        $request = Factory::createServerRequest([], 'GET', '/');
+        $request = $request->withAttribute('request-handler', new UtilsRequestHandler(function () {
+            return Factory::createResponse()->withHeader('X-Foo', 'Bar');
+        }));
+
+        $response = Dispatcher::run([
+            new RequestHandler(),
+        ], $request);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('Bar', $response->getHeaderLine('X-Foo'));
     }
 }
