@@ -3,12 +3,12 @@ declare(strict_types = 1);
 
 namespace Middlewares;
 
-use Middlewares\Utils\CallableHandler;
-use Middlewares\Utils\CallableResolver\CallableResolverInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
 use Interop\Http\Server\MiddlewareInterface;
 use Interop\Http\Server\RequestHandlerInterface;
+use Middlewares\Utils\CallableHandler;
+use Middlewares\Utils\CallableResolver\CallableResolverInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class RequestHandler implements MiddlewareInterface
 {
@@ -60,8 +60,17 @@ class RequestHandler implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $handler = $request->getAttribute($this->handlerAttribute);
-        $callable = new CallableHandler($handler, $this->arguments, $this->resolver);
+        $requestHandler = $request->getAttribute($this->handlerAttribute);
+
+        if ($requestHandler instanceof MiddlewareInterface) {
+            return $requestHandler->process($request, $handler);
+        }
+
+        if ($requestHandler instanceof RequestHandlerInterface) {
+            return $requestHandler->handle($request);
+        }
+
+        $callable = new CallableHandler($requestHandler, $this->arguments, $this->resolver);
 
         return $callable->handle($request);
     }
