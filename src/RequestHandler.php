@@ -5,17 +5,18 @@ namespace Middlewares;
 
 use Interop\Http\Server\MiddlewareInterface;
 use Interop\Http\Server\RequestHandlerInterface;
-use Middlewares\Utils\CallableHandler;
-use Middlewares\Utils\CallableResolver\CallableResolverInterface;
+use Middlewares\Utils\RequestHandlerContainer;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 
 class RequestHandler implements MiddlewareInterface
 {
     /**
-     * @var CallableResolverInterface Used to resolve the handlers
+     * @var ContainerInterface Used to resolve the handlers
      */
-    private $resolver;
+    private $container;
 
     /**
      * @var string Attribute name for handler reference
@@ -23,16 +24,11 @@ class RequestHandler implements MiddlewareInterface
     private $handlerAttribute = 'request-handler';
 
     /**
-     * @var array Extra arguments passed to the handler
-     */
-    private $arguments = [];
-
-    /**
      * Set the resolver instance.
      */
-    public function __construct(CallableResolverInterface $resolver = null)
+    public function __construct(ContainerInterface $container = null)
     {
-        $this->resolver = $resolver;
+        $this->container = $container;
     }
 
     /**
@@ -46,21 +42,16 @@ class RequestHandler implements MiddlewareInterface
     }
 
     /**
-     * Extra arguments passed to the handler.
-     */
-    public function arguments(...$args): self
-    {
-        $this->arguments = $args;
-
-        return $this;
-    }
-
-    /**
      * Process a server request and return a response.
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $requestHandler = $request->getAttribute($this->handlerAttribute);
+
+        if (is_string($requestHandler)) {
+            $container = $this->container ?: new RequestHandlerContainer();
+            $requestHandler = $container->get($requestHandler);
+        }
 
         if ($requestHandler instanceof MiddlewareInterface) {
             return $requestHandler->process($request, $handler);
@@ -70,8 +61,6 @@ class RequestHandler implements MiddlewareInterface
             return $requestHandler->handle($request);
         }
 
-        $callable = new CallableHandler($requestHandler, $this->arguments, $this->resolver);
-
-        return $callable->handle($request);
+        throw new RuntimeException('Invalid request handler');
     }
 }
