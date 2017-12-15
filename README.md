@@ -59,7 +59,7 @@ $dispatcher = new Dispatcher([
 $response = $dispatcher->dispatch(new ServerRequest('/hello/world'));
 ```
 
-When the request handler is invoked, it expects a request attribute to be defined that contains a reference to the handler. The reference will then be resolved and executed as a callable.
+When the request handler is invoked, it expects a request attribute to be defined that contains a reference to the handler. The handler can implement `MiddlewareInterface` or `RequestHandlerInterface`. If doesn't will then be resolved and executed as a callable using a resolver.
 
 **This middleware should be the last middleware dispatched!** It does not call the delegate to continue processing.
 

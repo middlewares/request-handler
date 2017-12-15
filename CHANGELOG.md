@@ -5,12 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.5.0] - 2017-12-14
+## [UNRELEASED]
 
 ### Added
 
 - Support for handlers implementing `MiddlewareInterface`
 - Support for handlers implementing `RequestHandlerInterface`
+
+### Removed
+
+- Removed `arguments()` option
+
+### Changed
+
+- Changed the constructor signature: Instead a `Middlewares\Utils\CallableResolverInterface`, now only `Psr\Container\ContainerInterface` implementations are accepted.
 
 ## [0.4.0] - 2017-11-13
 
@@ -45,7 +53,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 First version
 
-[0.5.0]: https://github.com/middlewares/request-handler/compare/v0.4.0...v0.5.0
+[UNRELEASED]: https://github.com/middlewares/request-handler/compare/v0.4.0...HEAD
 [0.4.0]: https://github.com/middlewares/request-handler/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/middlewares/request-handler/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/middlewares/request-handler/compare/v0.1.0...v0.2.0
