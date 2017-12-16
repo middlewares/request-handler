@@ -59,17 +59,15 @@ $dispatcher = new Dispatcher([
 $response = $dispatcher->dispatch(new ServerRequest('/hello/world'));
 ```
 
-When the request handler is invoked, it expects a request attribute to be defined that contains a reference to the handler. The handler must be a string or an implementation of `MiddlewareInterface` or `RequestHandlerInterface`. If it's a string, a `ContainerInterface` will be used to resolve it and get a `MiddlewareInterface` or a `RequestHandlerInterface`.
+When the request handler is invoked, it expects a request attribute to be defined that contains a reference to the handler. The handler must be a string or an object implementing `MiddlewareInterface` or `RequestHandlerInterface`. If it's a string, a `ContainerInterface` will be used to resolve it and get the `MiddlewareInterface` or `RequestHandlerInterface` to use.
 
 ```php
-use Middlewares\Utils\CallableResolver\ContainerResolver;
-
-// Use a PSR-11 container to load the handler
-$resolver = new ContainerResolver($container);
+// Use a PSR-11 container to create the intances of the request handlers
+$container = new RequestHandlerContainer();
 
 $dispatcher = new Dispatcher([
     // ...
-    new Middlewares\RequestHandler($resolver),
+    new Middlewares\RequestHandler($container),
 ]);
 ```
 
