@@ -20,7 +20,7 @@
     },
     "require": {
         "php": "^7.0",
-        "middlewares/utils": "~0.13",
+        "middlewares/utils": "~0.14",
         "http-interop/http-server-middleware": "^1.0"
     },
     "require-dev": {

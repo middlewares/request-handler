@@ -88,24 +88,13 @@ $dispatcher = new Dispatcher([
 
 ## Options
 
-### `__construct(Middlewares\Utils\CallableResolver\CallableResolverInterface $resolver)`
+### `__construct(Psr\Container\ContainerInterface $container)`
 
-The resolver instance to use. If none is provided a generic `ReflectionResolver` will be used.
+The container instance to use. If it's not provided, the [`Middlewares\Utils\RequestHandlerContainer`](https://github.com/middlewares/utils/blob/master/src/RequestHandlerContainer.php) will be used.
 
 ### `handlerAttribute(string $handlerAttribute)`
 
 The attribute name used to get the handler reference in the server request. The default attribute name is `request-handler`.
-
-### `arguments(...$args)`
-
-Extra arguments to pass to the handler. This is useful to inject, for example a service container:
-
-```php
-$dispatcher = new Dispatcher([
-    (new Middlewares\RequestHandler())
-        ->arguments($app)
-]);
-```
 
 ---
 
