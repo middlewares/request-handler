@@ -61,6 +61,6 @@ class RequestHandler implements MiddlewareInterface
             return $requestHandler->handle($request);
         }
 
-        throw new RuntimeException('Invalid request handler');
+        throw new RuntimeException(sprintf('Invalid request handler: %s', gettype($requestHandler)));
     }
 }
