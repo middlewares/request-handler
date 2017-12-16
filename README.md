@@ -59,20 +59,7 @@ $dispatcher = new Dispatcher([
 $response = $dispatcher->dispatch(new ServerRequest('/hello/world'));
 ```
 
-When the request handler is invoked, it expects a request attribute to be defined that contains a reference to the handler. The handler can implement `MiddlewareInterface` or `RequestHandlerInterface`. If doesn't will then be resolved and executed as a callable using a resolver.
-
-**This middleware should be the last middleware dispatched!** It does not call the delegate to continue processing.
-
-If no resolver is provided, the reference will be interpreted as follows:
-
-* If it's a string similar to `Namespace\Class::method`, and the method is not static, create a instance of `Namespace\Class` and call the method.
-* If the string is the name of a existing class (like: `Namespace\Class`) and contains the method `__invoke`, create a instance and execute that method.
-* Otherwise, treat it as a callable.
-
-There are two options to change the default behavior:
-
-- Inject a `Middlewares\Utils\CallableResolver\ContainerResolver` that wraps a [PSR-11 container](https://github.com/php-fig/container).
-- Inject a `Middlewares\Utils\CallableResolver\CallableResolverInterface` instance that returns a callable.
+When the request handler is invoked, it expects a request attribute to be defined that contains a reference to the handler. The handler must be a string or an implementation of `MiddlewareInterface` or `RequestHandlerInterface`. If it's a string, a `ContainerInterface` will be used to resolve it and get a `MiddlewareInterface` or a `RequestHandlerInterface`.
 
 ```php
 use Middlewares\Utils\CallableResolver\ContainerResolver;
@@ -90,7 +77,7 @@ $dispatcher = new Dispatcher([
 
 ### `__construct(Psr\Container\ContainerInterface $container)`
 
-The container instance to use. If it's not provided, the [`Middlewares\Utils\RequestHandlerContainer`](https://github.com/middlewares/utils/blob/master/src/RequestHandlerContainer.php) will be used.
+The container instance to resolve the handlers if they are provided as strings. By default will use [`Middlewares\Utils\RequestHandlerContainer`](https://github.com/middlewares/utils/blob/master/src/RequestHandlerContainer.php).
 
 ### `handlerAttribute(string $handlerAttribute)`
 
