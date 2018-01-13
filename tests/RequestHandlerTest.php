@@ -1,7 +1,9 @@
 <?php
+declare(strict_types = 1);
 
 namespace Middlewares\Tests;
 
+use Datetime;
 use Middlewares\RequestHandler;
 use Middlewares\Utils\Dispatcher;
 use Middlewares\Utils\Factory;
@@ -12,59 +14,81 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 
 class RequestHandlerTest extends TestCase
 {
-    public function testString()
-    {
-        $request = Factory::createServerRequest([], 'GET', '/');
-        $request = $request->withAttribute('request-handler', __CLASS__.'::handleRequest');
-
-        $response = Dispatcher::run([
-            new RequestHandler(),
-        ], $request);
-
-        $this->assertSame(200, $response->getStatusCode());
-    }
-
-    /**
-     * @param ServerRequestInterface $request
-     *
-     * @return ResponseInterface
-     */
-    public static function handleRequest(ServerRequestInterface $request)
+    public static function handleRequest(ServerRequestInterface $request): ResponseInterface
     {
         return Factory::createResponse();
     }
 
+    public function testString()
+    {
+        $response = Dispatcher::run(
+            [
+                new RequestHandler(),
+            ],
+            Factory::createServerRequest()->withAttribute('request-handler', __CLASS__.'::handleRequest')
+        );
+
+        $this->assertSame(200, $response->getStatusCode());
+    }
+
+    public function testCustomAttribute()
+    {
+        $response = Dispatcher::run(
+            [
+                (new RequestHandler())->handlerAttribute('custom'),
+            ],
+            Factory::createServerRequest()->withAttribute('custom', __CLASS__.'::handleRequest')
+        );
+
+        $this->assertSame(200, $response->getStatusCode());
+    }
+
+    public function testInvalidHandler()
+    {
+        $this->expectException(RuntimeException::class);
+
+        $response = Dispatcher::run(
+            [
+                new RequestHandler(),
+            ],
+            Factory::createServerRequest()->withAttribute('custom', new Datetime())
+        );
+    }
+
     public function testCustomContainer()
     {
-        $request = Factory::createServerRequest([], 'GET', '/');
-        $request = $request->withAttribute('request-handler', 'IndexController');
-
         /** @var ContainerInterface|ObjectProphecy $container */
         $container = $this->prophesize(ContainerInterface::class);
-        $container->get('IndexController', Argument::cetera())->willReturn(new UtilsRequestHandler(function ($request) {
-            return Factory::createResponse();
-        }));
+        $container->get('IndexController', Argument::cetera())
+            ->willReturn(new UtilsRequestHandler(function ($request) {
+                return Factory::createResponse();
+            }));
 
-        $response = Dispatcher::run([
-            new RequestHandler($container->reveal()),
-        ], $request);
+        $response = Dispatcher::run(
+            [
+                new RequestHandler($container->reveal()),
+            ],
+            Factory::createServerRequest()->withAttribute('request-handler', 'IndexController')
+        );
 
         $this->assertSame(200, $response->getStatusCode());
     }
 
     public function testRequestHandler()
     {
-        $request = Factory::createServerRequest([], 'GET', '/');
-        $request = $request->withAttribute('request-handler', new UtilsRequestHandler(function () {
-            return Factory::createResponse()->withHeader('X-Foo', 'Bar');
-        }));
-
-        $response = Dispatcher::run([
-            new RequestHandler(),
-        ], $request);
+        $response = Dispatcher::run(
+            [
+                new RequestHandler(),
+            ],
+            $request = Factory::createServerRequest()
+                ->withAttribute('request-handler', new UtilsRequestHandler(function () {
+                    return Factory::createResponse()->withHeader('X-Foo', 'Bar');
+                }))
+        );
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('Bar', $response->getHeaderLine('X-Foo'));
