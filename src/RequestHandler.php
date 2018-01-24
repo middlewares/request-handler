@@ -3,6 +3,8 @@ declare(strict_types = 1);
 
 namespace Middlewares;
 
+use Closure;
+use Middlewares\Utils\CallableHandler;
 use Middlewares\Utils\RequestHandlerContainer;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -59,6 +61,10 @@ class RequestHandler implements MiddlewareInterface
 
         if ($requestHandler instanceof RequestHandlerInterface) {
             return $requestHandler->handle($request);
+        }
+
+        if ($requestHandler instanceof Closure) {
+            return (new CallableHandler($requestHandler))->process($request, $handler);
         }
 
         throw new RuntimeException(sprintf('Invalid request handler: %s', gettype($requestHandler)));

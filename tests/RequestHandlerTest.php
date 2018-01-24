@@ -93,4 +93,20 @@ class RequestHandlerTest extends TestCase
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('Bar', $response->getHeaderLine('X-Foo'));
     }
+
+    public function testClosure()
+    {
+        $response = Dispatcher::run(
+            [
+                new RequestHandler(),
+            ],
+            $request = Factory::createServerRequest()
+                ->withAttribute('request-handler', function () {
+                    return Factory::createResponse()->withHeader('X-Foo', 'Bar');
+                })
+        );
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('Bar', $response->getHeaderLine('X-Foo'));
+    }
 }
