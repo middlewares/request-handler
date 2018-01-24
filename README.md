@@ -59,7 +59,7 @@ $dispatcher = new Dispatcher([
 $response = $dispatcher->dispatch(new ServerRequest('/hello/world'));
 ```
 
-When the request handler is invoked, it expects a request attribute to be defined that contains a reference to the handler. The handler must be a string, a `Closure` or an object implementing `MiddlewareInterface` or `RequestHandlerInterface`. If it's a string, a `ContainerInterface` will be used to resolve it and get the `MiddlewareInterface` or `RequestHandlerInterface` to use. If it's a `Closure`, will be converted automatically to `MiddlewareInterface` using the [middlewares/utils CallableHandler](https://github.com/middlewares/utils#callablehandler)
+When the request handler is invoked, it expects a request attribute to be defined that contains a reference to the handler. The handler must be a string, a `Closure` or an object implementing `MiddlewareInterface` or `RequestHandlerInterface`. If it's a string, a `ContainerInterface` will be used to resolve it and get the `MiddlewareInterface` or `RequestHandlerInterface` to use. If it's a `Closure`, will be converted automatically to `MiddlewareInterface` using the [`Middlewares\Utils\CallableHandler`](https://github.com/middlewares/utils#callablehandler)
 
 ```php
 // Use a PSR-11 container to create the intances of the request handlers
@@ -73,7 +73,7 @@ $dispatcher = new Dispatcher([
 
 ## Options
 
-### `__construct(Psr\Container\ContainerInterface $container)`
+### `__construct(Psr\Container\ContainerInterface $container = null)`
 
 The container instance to resolve the handlers if they are provided as strings. By default will use [`Middlewares\Utils\RequestHandlerContainer`](https://github.com/middlewares/utils/blob/master/src/RequestHandlerContainer.php).
 
