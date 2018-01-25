@@ -31,7 +31,7 @@
         "psr/container": "^1.0"
     },
     "suggest": {
-        "psr/container": "Can be used to automatically resolve handlers"
+        "psr/container": "Can be used to resolve handlers automatically"
     },
     "autoload": {
         "psr-4": {
