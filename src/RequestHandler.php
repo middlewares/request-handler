@@ -3,7 +3,6 @@ declare(strict_types = 1);
 
 namespace Middlewares;
 
-use Closure;
 use Middlewares\Utils\CallableHandler;
 use Middlewares\Utils\RequestHandlerContainer;
 use Psr\Container\ContainerInterface;
