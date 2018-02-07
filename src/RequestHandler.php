@@ -30,7 +30,7 @@ class RequestHandler implements MiddlewareInterface
      */
     public function __construct(ContainerInterface $container = null)
     {
-        $this->container = $container;
+        $this->container = $container ?: new RequestHandlerContainer();
     }
 
     /**
@@ -51,8 +51,7 @@ class RequestHandler implements MiddlewareInterface
         $requestHandler = $request->getAttribute($this->handlerAttribute);
 
         if (is_string($requestHandler)) {
-            $container = $this->container ?: new RequestHandlerContainer();
-            $requestHandler = $container->get($requestHandler);
+            $requestHandler = $this->container->get($requestHandler);
         }
 
         if ($requestHandler instanceof MiddlewareInterface) {
@@ -63,7 +62,7 @@ class RequestHandler implements MiddlewareInterface
             return $requestHandler->handle($request);
         }
 
-        if ($requestHandler instanceof Closure) {
+        if (is_callable($requestHandler)) {
             return (new CallableHandler($requestHandler))->process($request, $handler);
         }
 
