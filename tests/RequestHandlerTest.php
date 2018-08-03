@@ -29,7 +29,7 @@ class RequestHandlerTest extends TestCase
             [
                 new RequestHandler(),
             ],
-            Factory::createServerRequest()->withAttribute('request-handler', __CLASS__.'::handleRequest')
+            Factory::createServerRequest('GET', '/')->withAttribute('request-handler', __CLASS__.'::handleRequest')
         );
 
         $this->assertSame(200, $response->getStatusCode());
@@ -41,7 +41,7 @@ class RequestHandlerTest extends TestCase
             [
                 (new RequestHandler())->handlerAttribute('custom'),
             ],
-            Factory::createServerRequest()->withAttribute('custom', __CLASS__.'::handleRequest')
+            Factory::createServerRequest('GET', '/')->withAttribute('custom', __CLASS__.'::handleRequest')
         );
 
         $this->assertSame(200, $response->getStatusCode());
@@ -55,7 +55,7 @@ class RequestHandlerTest extends TestCase
             [
                 new RequestHandler(),
             ],
-            Factory::createServerRequest()->withAttribute('custom', new Datetime())
+            Factory::createServerRequest('GET', '/')->withAttribute('custom', new Datetime())
         );
     }
 
@@ -72,7 +72,7 @@ class RequestHandlerTest extends TestCase
             [
                 new RequestHandler($container->reveal()),
             ],
-            Factory::createServerRequest()->withAttribute('request-handler', 'IndexController')
+            Factory::createServerRequest('GET', '/')->withAttribute('request-handler', 'IndexController')
         );
 
         $this->assertSame(200, $response->getStatusCode());
@@ -84,7 +84,7 @@ class RequestHandlerTest extends TestCase
             [
                 new RequestHandler(),
             ],
-            $request = Factory::createServerRequest()
+            $request = Factory::createServerRequest('GET', '/')
                 ->withAttribute('request-handler', new UtilsRequestHandler(function () {
                     return Factory::createResponse()->withHeader('X-Foo', 'Bar');
                 }))
@@ -100,7 +100,7 @@ class RequestHandlerTest extends TestCase
             [
                 new RequestHandler(),
             ],
-            $request = Factory::createServerRequest()
+            $request = Factory::createServerRequest('GET', '/')
                 ->withAttribute('request-handler', function () {
                     return Factory::createResponse()->withHeader('X-Foo', 'Bar');
                 })
