@@ -28,7 +28,7 @@ You may also want to install any route middleware like [middlewares/fast-route](
 
 ## Purpose
 
-There are two completely separate steps when it comes to route handing:
+There are two completely separate steps when it comes to route handling:
 
 1. Determining if the request is valid and can be resolved by the application.
 2. Handling the request inside the application.
