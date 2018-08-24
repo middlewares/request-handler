@@ -83,7 +83,7 @@ The attribute name used to get the handler reference in the server request. The 
 
 ### `continueOnEmpty(bool $continueOnEmpty)`
 
-Set `true` to continue with the next middleware if the server request attribute is empty or does not exists.
+Set `true` to make the request handler optional so it continues with the next middleware if the server request attribute is empty or does not exists.
 
 ---
 
