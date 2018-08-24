@@ -20,6 +20,11 @@ class RequestHandler implements MiddlewareInterface
     private $container;
 
     /**
+     * @var bool
+     */
+    private $continueOnEmpty = false;
+
+    /**
      * @var string Attribute name for handler reference
      */
     private $handlerAttribute = 'request-handler';
@@ -43,11 +48,29 @@ class RequestHandler implements MiddlewareInterface
     }
 
     /**
+     * Configure whether continue with the next handler if custom requestHandler is empty.
+     */
+    public function continueOnEmpty(bool $continueOnEmpty = true): self
+    {
+        $this->continueOnEmpty = $continueOnEmpty;
+
+        return $this;
+    }
+
+    /**
      * Process a server request and return a response.
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $requestHandler = $request->getAttribute($this->handlerAttribute);
+
+        if (empty($requestHandler)) {
+            if ($this->continueOnEmpty) {
+                return $handler->handle($request);
+            }
+
+            throw new RuntimeException('Empty request handler');
+        }
 
         if (is_string($requestHandler)) {
             $requestHandler = $this->container->get($requestHandler);

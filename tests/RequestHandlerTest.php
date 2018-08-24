@@ -14,6 +14,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Exception;
 use RuntimeException;
 
 class RequestHandlerTest extends TestCase
@@ -108,5 +109,68 @@ class RequestHandlerTest extends TestCase
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('Bar', $response->getHeaderLine('X-Foo'));
+    }
+
+    public function testContinueOnEmptyClosure()
+    {
+        $response = Dispatcher::run(
+            [
+                (new RequestHandler())->continueOnEmpty(),
+                function () {
+                    return 'Fallback';
+                }
+            ]
+        );
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('Fallback', (string) $response->getBody());
+    }
+
+    public function testThrowExceptionOnEmpty()
+    {
+        $response = Dispatcher::run(
+            [
+                function ($request, $next) {
+                    try {
+                        return $next->handle($request);
+                    } catch (RuntimeException $e) {
+                        return $e->getMessage();
+                    }
+                },
+
+                new RequestHandler(),
+
+                function () {
+                    return 'Fallback';
+                }
+            ]
+        );
+
+        $this->assertSame('Empty request handler', (string) $response->getBody());
+    }
+
+    public function testThrowExceptionOnInvalidHandler()
+    {
+        $response = Dispatcher::run(
+            [
+                function ($request, $next) {
+                    try {
+                        return $next->handle($request);
+                    } catch (Exception $e) {
+                        return $e->getMessage();
+                    }
+                },
+
+                new RequestHandler(),
+
+                function () {
+                    return 'Fallback';
+                }
+            ],
+            $request = Factory::createServerRequest('GET', '/')
+                ->withAttribute('request-handler', ['--invalid--'])
+        );
+
+        $this->assertSame('Invalid request handler: array', (string) $response->getBody());
     }
 }
