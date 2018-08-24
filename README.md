@@ -81,6 +81,10 @@ The container instance to resolve the handlers if they are provided as strings. 
 
 The attribute name used to get the handler reference in the server request. The default attribute name is `request-handler`.
 
+### `continueOnEmpty(bool $continueOnEmpty)`
+
+Set `true` to continue with the next middleware if the server request attribute is empty or does not exists.
+
 ---
 
 Please see [CHANGELOG](CHANGELOG.md) for more information about recent changes and [CONTRIBUTING](CONTRIBUTING.md) for contributing details.
