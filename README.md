@@ -71,19 +71,31 @@ $dispatcher = new Dispatcher([
 ]);
 ```
 
-## Options
+## API
 
-### `__construct(Psr\Container\ContainerInterface $container = null)`
+### `__construct`
 
-The container instance to resolve the handlers if they are provided as strings. By default will use [`Middlewares\Utils\RequestHandlerContainer`](https://github.com/middlewares/utils/blob/master/src/RequestHandlerContainer.php).
+Define the container used to resolve the handlers if they are provided as string (or an array with 2 strings). By default will use [`Middlewares\Utils\RequestHandlerContainer`](https://github.com/middlewares/utils/blob/master/src/RequestHandlerContainer.php).
+
+Type | Required | Description
+-----|----------|------------
+`Psr\Container\ContainerInterface` | No | The custom container instance
 
 ### `handlerAttribute(string $handlerAttribute)`
 
-The attribute name used to get the handler reference in the server request. The default attribute name is `request-handler`.
+Configures the attribute name used to get the handler reference in the server request. The default is `request-handler`.
+
+Type | Required | Description
+-----|----------|------------
+`string` | Yes | The new attribute name
 
 ### `continueOnEmpty(bool $continueOnEmpty)`
 
-Set `true` to make the request handler optional so it continues with the next middleware if the server request attribute is empty or does not exists.
+If the server request attribute is empty or does not exists, an exception is throwed. This function changes this behavior to continue with the next middleware.
+
+Type | Required | Description
+-----|----------|------------
+`string` | No | Set `true` to continue, `false` to throw the exception. If none is defined, `true` will be used.
 
 ---
 
