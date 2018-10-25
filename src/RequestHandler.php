@@ -76,6 +76,10 @@ class RequestHandler implements MiddlewareInterface
             $requestHandler = $this->container->get($requestHandler);
         }
 
+        if (is_array($requestHandler) && count($requestHandler) === 2 && is_string($requestHandler[0])) {
+            $requestHandler[0] = $this->container->get($requestHandler[0]);
+        }
+
         if ($requestHandler instanceof MiddlewareInterface) {
             return $requestHandler->process($request, $handler);
         }
