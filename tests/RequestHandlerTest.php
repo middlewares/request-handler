@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace Middlewares\Tests;
 
 use Datetime;
+use Exception;
 use Middlewares\RequestHandler;
 use Middlewares\Utils\Dispatcher;
 use Middlewares\Utils\Factory;
@@ -14,7 +15,6 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Exception;
 use RuntimeException;
 
 class RequestHandlerTest extends TestCase
@@ -79,6 +79,21 @@ class RequestHandlerTest extends TestCase
         $this->assertSame(200, $response->getStatusCode());
     }
 
+    public function testArrayHandler()
+    {
+        $request = Factory::createServerRequest('GET', '/');
+        $request = $request->withAttribute('request-handler', ['Middlewares\\Tests\\Controller', 'run']);
+
+        $response = Dispatcher::run(
+            [
+                new RequestHandler(),
+            ],
+            $request
+        );
+
+        $this->assertSame('Ok', (string) $response->getBody());
+    }
+
     public function testRequestHandler()
     {
         $response = Dispatcher::run(
@@ -118,7 +133,7 @@ class RequestHandlerTest extends TestCase
                 (new RequestHandler())->continueOnEmpty(),
                 function () {
                     return 'Fallback';
-                }
+                },
             ]
         );
 
@@ -142,7 +157,7 @@ class RequestHandlerTest extends TestCase
 
                 function () {
                     return 'Fallback';
-                }
+                },
             ]
         );
 
@@ -165,7 +180,7 @@ class RequestHandlerTest extends TestCase
 
                 function () {
                     return 'Fallback';
-                }
+                },
             ],
             $request = Factory::createServerRequest('GET', '/')
                 ->withAttribute('request-handler', ['--invalid--'])
