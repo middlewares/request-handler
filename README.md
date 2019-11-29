@@ -100,7 +100,11 @@ If the server request attribute is empty or does not exists, an exception is thr
 
 ```php
 Dispatcher::run([
+    //Try this
     (new Middlewares\RequestHandler())->continueOnEmpty(),
+
+    //If there's no handler, try that
+    (new Middlewares\RequestHandler())->handlerAttribute('other'),
 ]);
 ```
 ---
