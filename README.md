@@ -5,13 +5,12 @@
 [![Build Status][ico-travis]][link-travis]
 [![Quality Score][ico-scrutinizer]][link-scrutinizer]
 [![Total Downloads][ico-downloads]][link-downloads]
-[![SensioLabs Insight][ico-sensiolabs]][link-sensiolabs]
 
 Middleware to execute request handlers discovered by a router.
 
 ## Requirements
 
-* PHP >= 7.0
+* PHP >= 7.2
 * A [PSR-7 http library](https://github.com/middlewares/awesome-psr15-middlewares#psr-7-implementations)
 * A [PSR-15 middleware dispatcher](https://github.com/middlewares/awesome-psr15-middlewares#dispatcher)
 * Optionally, a [PSR-11](https://github.com/php-fig/container) container to resolve the route handlers
@@ -71,32 +70,28 @@ $dispatcher = new Dispatcher([
 ]);
 ```
 
-## API
-
-### `__construct`
+## Usage
 
 Define the container used to resolve the handlers if they are provided as string (or an array with 2 strings). By default will use [`Middlewares\Utils\RequestHandlerContainer`](https://github.com/middlewares/utils/blob/master/src/RequestHandlerContainer.php).
 
-Type | Required | Description
------|----------|------------
-`Psr\Container\ContainerInterface` | No | The custom container instance
+```php
+// Use the default PSR-11 container to create the intances of the request handlers
+$handler = new Middlewares\RequestHandler();
 
-### `handlerAttribute`
+// Use a custom PSR-11 container
+$container = new RequestHandlerContainer();
+
+$handler = new Middlewares\RequestHandler($container);
+```
+
+### handlerAttribute
 
 Configures the attribute name used to get the handler reference in the server request. The default is `request-handler`.
 
-Type | Required | Description
------|----------|------------
-`string` | Yes | The new attribute name
 
-### `continueOnEmpty`
+### continueOnEmpty
 
 If the server request attribute is empty or does not exists, an exception is throwed. This function changes this behavior to continue with the next middleware.
-
-Type | Required | Description
------|----------|------------
-`string` | No | Set `true` to continue, `false` to throw the exception. If none is defined, `true` will be used.
-
 ---
 
 Please see [CHANGELOG](CHANGELOG.md) for more information about recent changes and [CONTRIBUTING](CONTRIBUTING.md) for contributing details.
@@ -108,10 +103,8 @@ The MIT License (MIT). Please see [LICENSE](LICENSE) for more information.
 [ico-travis]: https://img.shields.io/travis/middlewares/request-handler/master.svg?style=flat-square
 [ico-scrutinizer]: https://img.shields.io/scrutinizer/g/middlewares/request-handler.svg?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/middlewares/request-handler.svg?style=flat-square
-[ico-sensiolabs]: https://img.shields.io/sensiolabs/i/8afda09a-397a-4c80-9dc8-6edc081a03e3.svg?style=flat-square
 
 [link-packagist]: https://packagist.org/packages/middlewares/request-handler
 [link-travis]: https://travis-ci.org/middlewares/request-handler
 [link-scrutinizer]: https://scrutinizer-ci.com/g/middlewares/request-handler
 [link-downloads]: https://packagist.org/packages/middlewares/request-handler
-[link-sensiolabs]: https://insight.sensiolabs.com/projects/8afda09a-397a-4c80-9dc8-6edc081a03e3
