@@ -88,10 +88,21 @@ $handler = new Middlewares\RequestHandler($container);
 
 Configures the attribute name used to get the handler reference in the server request. The default is `request-handler`.
 
+```php
+Dispatcher::run([
+    (new Middlewares\RequestHandler())->handlerAttribute('route'),
+]);
+```
 
 ### continueOnEmpty
 
 If the server request attribute is empty or does not exists, an exception is throwed. This function changes this behavior to continue with the next middleware.
+
+```php
+Dispatcher::run([
+    (new Middlewares\RequestHandler())->continueOnEmpty(),
+]);
+```
 ---
 
 Please see [CHANGELOG](CHANGELOG.md) for more information about recent changes and [CONTRIBUTING](CONTRIBUTING.md) for contributing details.
