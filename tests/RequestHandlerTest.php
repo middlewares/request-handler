@@ -11,6 +11,7 @@ use Middlewares\Utils\Factory;
 use Middlewares\Utils\RequestHandler as UtilsRequestHandler;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -19,12 +20,14 @@ use RuntimeException;
 
 class RequestHandlerTest extends TestCase
 {
+    use ProphecyTrait;
+
     public static function handleRequest(ServerRequestInterface $request): ResponseInterface
     {
         return Factory::createResponse();
     }
 
-    public function testString()
+    public function testString(): void
     {
         $response = Dispatcher::run(
             [
@@ -33,10 +36,10 @@ class RequestHandlerTest extends TestCase
             Factory::createServerRequest('GET', '/')->withAttribute('request-handler', __CLASS__.'::handleRequest')
         );
 
-        $this->assertSame(200, $response->getStatusCode());
+        self::assertSame(200, $response->getStatusCode());
     }
 
-    public function testCustomAttribute()
+    public function testCustomAttribute(): void
     {
         $response = Dispatcher::run(
             [
@@ -45,10 +48,10 @@ class RequestHandlerTest extends TestCase
             Factory::createServerRequest('GET', '/')->withAttribute('custom', __CLASS__.'::handleRequest')
         );
 
-        $this->assertSame(200, $response->getStatusCode());
+        self::assertSame(200, $response->getStatusCode());
     }
 
-    public function testInvalidHandler()
+    public function testInvalidHandler(): void
     {
         $this->expectException(RuntimeException::class);
 
@@ -60,7 +63,7 @@ class RequestHandlerTest extends TestCase
         );
     }
 
-    public function testCustomContainer()
+    public function testCustomContainer(): void
     {
         /** @var ContainerInterface|ObjectProphecy $container */
         $container = $this->prophesize(ContainerInterface::class);
@@ -76,10 +79,10 @@ class RequestHandlerTest extends TestCase
             Factory::createServerRequest('GET', '/')->withAttribute('request-handler', 'IndexController')
         );
 
-        $this->assertSame(200, $response->getStatusCode());
+        self::assertSame(200, $response->getStatusCode());
     }
 
-    public function testArrayHandler()
+    public function testArrayHandler(): void
     {
         $request = Factory::createServerRequest('GET', '/');
         $request = $request->withAttribute('request-handler', ['Middlewares\\Tests\\Controller', 'run']);
@@ -91,10 +94,10 @@ class RequestHandlerTest extends TestCase
             $request
         );
 
-        $this->assertSame('Ok', (string) $response->getBody());
+        self::assertSame('Ok', (string) $response->getBody());
     }
 
-    public function testRequestHandler()
+    public function testRequestHandler(): void
     {
         $response = Dispatcher::run(
             [
@@ -106,11 +109,11 @@ class RequestHandlerTest extends TestCase
                 }))
         );
 
-        $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('Bar', $response->getHeaderLine('X-Foo'));
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame('Bar', $response->getHeaderLine('X-Foo'));
     }
 
-    public function testClosure()
+    public function testClosure(): void
     {
         $response = Dispatcher::run(
             [
@@ -122,11 +125,11 @@ class RequestHandlerTest extends TestCase
                 })
         );
 
-        $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('Bar', $response->getHeaderLine('X-Foo'));
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame('Bar', $response->getHeaderLine('X-Foo'));
     }
 
-    public function testContinueOnEmptyClosure()
+    public function testContinueOnEmptyClosure(): void
     {
         $response = Dispatcher::run(
             [
@@ -137,11 +140,11 @@ class RequestHandlerTest extends TestCase
             ]
         );
 
-        $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('Fallback', (string) $response->getBody());
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame('Fallback', (string) $response->getBody());
     }
 
-    public function testThrowExceptionOnEmpty()
+    public function testThrowExceptionOnEmpty(): void
     {
         $response = Dispatcher::run(
             [
@@ -161,10 +164,10 @@ class RequestHandlerTest extends TestCase
             ]
         );
 
-        $this->assertSame('Empty request handler', (string) $response->getBody());
+        self::assertSame('Empty request handler', (string) $response->getBody());
     }
 
-    public function testThrowExceptionOnInvalidHandler()
+    public function testThrowExceptionOnInvalidHandler(): void
     {
         $response = Dispatcher::run(
             [
@@ -186,6 +189,6 @@ class RequestHandlerTest extends TestCase
                 ->withAttribute('request-handler', ['--invalid--'])
         );
 
-        $this->assertSame('Invalid request handler: array', (string) $response->getBody());
+        self::assertSame('Invalid request handler: array', (string) $response->getBody());
     }
 }
