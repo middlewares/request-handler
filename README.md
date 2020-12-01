@@ -2,8 +2,7 @@
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]](LICENSE)
-[![Build Status][ico-travis]][link-travis]
-[![Quality Score][ico-scrutinizer]][link-scrutinizer]
+![Testing][ico-ga]
 [![Total Downloads][ico-downloads]][link-downloads]
 
 Middleware to execute request handlers discovered by a router.
@@ -115,11 +114,9 @@ The MIT License (MIT). Please see [LICENSE](LICENSE) for more information.
 
 [ico-version]: https://img.shields.io/packagist/v/middlewares/request-handler.svg?style=flat-square
 [ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
-[ico-travis]: https://img.shields.io/travis/middlewares/request-handler/master.svg?style=flat-square
-[ico-scrutinizer]: https://img.shields.io/scrutinizer/g/middlewares/request-handler.svg?style=flat-square
+[ico-ga]: https://github.com/middlewares/request-handler/workflows/testing/badge.svg
 [ico-downloads]: https://img.shields.io/packagist/dt/middlewares/request-handler.svg?style=flat-square
 
 [link-packagist]: https://packagist.org/packages/middlewares/request-handler
-[link-travis]: https://travis-ci.org/middlewares/request-handler
 [link-scrutinizer]: https://scrutinizer-ci.com/g/middlewares/request-handler
 [link-downloads]: https://packagist.org/packages/middlewares/request-handler
