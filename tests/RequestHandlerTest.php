@@ -10,6 +10,7 @@ use Middlewares\Utils\Dispatcher;
 use Middlewares\Utils\Factory;
 use Middlewares\Utils\RequestHandler as UtilsRequestHandler;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Container\ContainerInterface;
@@ -19,6 +20,8 @@ use RuntimeException;
 
 class RequestHandlerTest extends TestCase
 {
+    use ProphecyTrait;
+
     public static function handleRequest(ServerRequestInterface $request): ResponseInterface
     {
         return Factory::createResponse();
