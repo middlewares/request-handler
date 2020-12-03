@@ -22,6 +22,19 @@ class RequestHandlerTest extends TestCase
 {
     use ProphecyTrait;
 
+    /**
+     * phpunit 8 support
+     */
+    public static function assertMatchesRegularExpression(string $pattern, string $string, string $message = ''): void
+    {
+        if (method_exists(parent::class, 'assertMatchesRegularExpression')) {
+            parent::assertMatchesRegularExpression($pattern, $string, $message);
+            return;
+        }
+
+        self::assertRegExp($pattern, $string, $message);
+    }
+
     public static function handleRequest(ServerRequestInterface $request): ResponseInterface
     {
         return Factory::createResponse();
@@ -36,7 +49,7 @@ class RequestHandlerTest extends TestCase
             Factory::createServerRequest('GET', '/')->withAttribute('request-handler', __CLASS__.'::handleRequest')
         );
 
-        $this->assertSame(200, $response->getStatusCode());
+        self::assertSame(200, $response->getStatusCode());
     }
 
     public function testCustomAttribute()
@@ -48,7 +61,7 @@ class RequestHandlerTest extends TestCase
             Factory::createServerRequest('GET', '/')->withAttribute('custom', __CLASS__.'::handleRequest')
         );
 
-        $this->assertSame(200, $response->getStatusCode());
+        self::assertSame(200, $response->getStatusCode());
     }
 
     public function testInvalidHandler()
@@ -79,7 +92,7 @@ class RequestHandlerTest extends TestCase
             Factory::createServerRequest('GET', '/')->withAttribute('request-handler', 'IndexController')
         );
 
-        $this->assertSame(200, $response->getStatusCode());
+        self::assertSame(200, $response->getStatusCode());
     }
 
     public function testArrayHandler()
@@ -94,7 +107,7 @@ class RequestHandlerTest extends TestCase
             $request
         );
 
-        $this->assertSame('Ok', (string) $response->getBody());
+        self::assertSame('Ok', (string) $response->getBody());
     }
 
     public function testRequestHandler()
@@ -109,8 +122,8 @@ class RequestHandlerTest extends TestCase
                 }))
         );
 
-        $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('Bar', $response->getHeaderLine('X-Foo'));
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame('Bar', $response->getHeaderLine('X-Foo'));
     }
 
     public function testClosure()
@@ -125,8 +138,8 @@ class RequestHandlerTest extends TestCase
                 })
         );
 
-        $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('Bar', $response->getHeaderLine('X-Foo'));
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame('Bar', $response->getHeaderLine('X-Foo'));
     }
 
     public function testContinueOnEmptyClosure()
@@ -140,8 +153,8 @@ class RequestHandlerTest extends TestCase
             ]
         );
 
-        $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('Fallback', (string) $response->getBody());
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame('Fallback', (string) $response->getBody());
     }
 
     public function testThrowExceptionOnEmpty()
@@ -164,7 +177,7 @@ class RequestHandlerTest extends TestCase
             ]
         );
 
-        $this->assertSame('Empty request handler', (string) $response->getBody());
+        self::assertSame('Empty request handler', (string) $response->getBody());
     }
 
     public function testThrowExceptionOnInvalidHandler()
@@ -189,6 +202,6 @@ class RequestHandlerTest extends TestCase
                 ->withAttribute('request-handler', ['--invalid--'])
         );
 
-        $this->assertSame('Invalid request handler: array', (string) $response->getBody());
+        self::assertSame('Invalid request handler: array', (string) $response->getBody());
     }
 }
