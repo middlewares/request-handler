@@ -10,9 +10,6 @@ use Middlewares\Utils\Dispatcher;
 use Middlewares\Utils\Factory;
 use Middlewares\Utils\RequestHandler as UtilsRequestHandler;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -20,8 +17,6 @@ use RuntimeException;
 
 class RequestHandlerTest extends TestCase
 {
-    use ProphecyTrait;
-
     /**
      * phpunit 8 support
      */
@@ -74,25 +69,6 @@ class RequestHandlerTest extends TestCase
             ],
             Factory::createServerRequest('GET', '/')->withAttribute('custom', new Datetime())
         );
-    }
-
-    public function testCustomContainer()
-    {
-        /** @var ContainerInterface|ObjectProphecy $container */
-        $container = $this->prophesize(ContainerInterface::class);
-        $container->get('IndexController', Argument::cetera())
-            ->willReturn(new UtilsRequestHandler(function ($request) {
-                return Factory::createResponse();
-            }));
-
-        $response = Dispatcher::run(
-            [
-                new RequestHandler($container->reveal()),
-            ],
-            Factory::createServerRequest('GET', '/')->withAttribute('request-handler', 'IndexController')
-        );
-
-        self::assertSame(200, $response->getStatusCode());
     }
 
     public function testArrayHandler()
