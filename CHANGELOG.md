@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.0.2] - 2022-05-09
+### Added
+- Support psr/container 2 [#13]
+
 ## [2.0.1] - 2020-12-04
 ### Added
 - Support for PHP 8.0
@@ -81,9 +85,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Improved docs and examples in README
 
-## 0.1.0 - 2017-04-19
+## [0.1.0] - 2017-04-19
 First version
 
+[#13]: https://github.com/middlewares/request-handler/issues/13
+
+[2.0.2]: https://github.com/middlewares/request-handler/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/middlewares/request-handler/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/middlewares/request-handler/compare/v1.4.0...v2.0.0
 [1.4.0]: https://github.com/middlewares/request-handler/compare/v1.3.0...v1.4.0
@@ -96,3 +103,4 @@ First version
 [0.4.0]: https://github.com/middlewares/request-handler/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/middlewares/request-handler/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/middlewares/request-handler/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/middlewares/request-handler/releases/tag/v0.1.0
