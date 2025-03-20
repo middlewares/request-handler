@@ -32,7 +32,7 @@ class RequestHandler implements MiddlewareInterface
     /**
      * Set the resolver instance.
      */
-    public function __construct(ContainerInterface $container = null)
+    public function __construct(?ContainerInterface $container = null)
     {
         $this->container = $container ?: new RequestHandlerContainer();
     }
