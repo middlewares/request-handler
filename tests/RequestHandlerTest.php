@@ -10,7 +10,6 @@ use Middlewares\Utils\Dispatcher;
 use Middlewares\Utils\Factory;
 use Middlewares\Utils\RequestHandler as UtilsRequestHandler;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
@@ -22,9 +21,10 @@ class RequestHandlerTest extends TestCase
      */
     public static function assertMatchesRegularExpression(string $pattern, string $string, string $message = ''): void
     {
-        /** @phpstan-ignore function.alreadyNarrowedType */
+        /* @phpstan-ignore function.alreadyNarrowedType */
         if (method_exists(parent::class, 'assertMatchesRegularExpression')) {
             parent::assertMatchesRegularExpression($pattern, $string, $message);
+
             return;
         }
 

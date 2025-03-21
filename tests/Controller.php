@@ -14,6 +14,7 @@ class Controller implements RequestHandlerInterface
     {
         $response = Factory::createResponse();
         $response->getBody()->write('Ok');
+
         return $response;
     }
 
