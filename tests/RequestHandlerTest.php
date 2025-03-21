@@ -10,7 +10,6 @@ use Middlewares\Utils\Dispatcher;
 use Middlewares\Utils\Factory;
 use Middlewares\Utils\RequestHandler as UtilsRequestHandler;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
@@ -22,8 +21,10 @@ class RequestHandlerTest extends TestCase
      */
     public static function assertMatchesRegularExpression(string $pattern, string $string, string $message = ''): void
     {
+        /* @phpstan-ignore function.alreadyNarrowedType */
         if (method_exists(parent::class, 'assertMatchesRegularExpression')) {
             parent::assertMatchesRegularExpression($pattern, $string, $message);
+
             return;
         }
 
@@ -35,7 +36,7 @@ class RequestHandlerTest extends TestCase
         return Factory::createResponse();
     }
 
-    public function testString()
+    public function testString(): void
     {
         $response = Dispatcher::run(
             [
@@ -47,7 +48,7 @@ class RequestHandlerTest extends TestCase
         self::assertSame(200, $response->getStatusCode());
     }
 
-    public function testCustomAttribute()
+    public function testCustomAttribute(): void
     {
         $response = Dispatcher::run(
             [
@@ -59,7 +60,7 @@ class RequestHandlerTest extends TestCase
         self::assertSame(200, $response->getStatusCode());
     }
 
-    public function testInvalidHandler()
+    public function testInvalidHandler(): void
     {
         $this->expectException(RuntimeException::class);
 
@@ -71,7 +72,7 @@ class RequestHandlerTest extends TestCase
         );
     }
 
-    public function testArrayHandler()
+    public function testArrayHandler(): void
     {
         $request = Factory::createServerRequest('GET', '/');
         $request = $request->withAttribute('request-handler', ['Middlewares\\Tests\\Controller', 'run']);
@@ -86,7 +87,7 @@ class RequestHandlerTest extends TestCase
         self::assertSame('Ok', (string) $response->getBody());
     }
 
-    public function testRequestHandler()
+    public function testRequestHandler(): void
     {
         $response = Dispatcher::run(
             [
@@ -102,7 +103,7 @@ class RequestHandlerTest extends TestCase
         self::assertSame('Bar', $response->getHeaderLine('X-Foo'));
     }
 
-    public function testClosure()
+    public function testClosure(): void
     {
         $response = Dispatcher::run(
             [
@@ -118,7 +119,7 @@ class RequestHandlerTest extends TestCase
         self::assertSame('Bar', $response->getHeaderLine('X-Foo'));
     }
 
-    public function testContinueOnEmptyClosure()
+    public function testContinueOnEmptyClosure(): void
     {
         $response = Dispatcher::run(
             [
@@ -133,7 +134,7 @@ class RequestHandlerTest extends TestCase
         self::assertSame('Fallback', (string) $response->getBody());
     }
 
-    public function testThrowExceptionOnEmpty()
+    public function testThrowExceptionOnEmpty(): void
     {
         $response = Dispatcher::run(
             [
@@ -156,7 +157,7 @@ class RequestHandlerTest extends TestCase
         self::assertSame('Empty request handler', (string) $response->getBody());
     }
 
-    public function testThrowExceptionOnInvalidHandler()
+    public function testThrowExceptionOnInvalidHandler(): void
     {
         $response = Dispatcher::run(
             [
