@@ -1,10 +1,10 @@
 name: "testing"
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    push:
+        branches: [ master ]
+    pull_request:
+        branches: [ master ]
 
 jobs:
     qa:
@@ -22,10 +22,10 @@ jobs:
               id: composer-cache
               uses: actions/cache@v4
               with:
-                path: vendor
-                key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-                restore-keys: |
-                  ${{ runner.os }}-php-
+                  path: vendor
+                  key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-php-
 
             - name: Install dependencies
               if: steps.composer-cache.outputs.cache-hit != 'true'
@@ -40,15 +40,15 @@ jobs:
 
         strategy:
             matrix:
-              php:
-                - 7.2
-                - 7.3
-                - 7.4
-                - 8.0
-                - 8.1
-                - 8.2
-                - 8.3
-                - 8.4
+                php:
+                    - 7.2
+                    - 7.3
+                    - 7.4
+                    - 8.0
+                    - 8.1
+                    - 8.2
+                    - 8.3
+                    - 8.4
 
         steps:
             - name: Checkout
@@ -71,6 +71,3 @@ jobs:
 
             - name: Tests
               run: composer test
-
-            - name: Tests coverage
-              run: composer coverage
